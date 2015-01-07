@@ -109,8 +109,7 @@ public class Merger {
 			int i = fileName.lastIndexOf('.');
 			i = i == -1 ? fileName.length() - 1 : i;
 			String extension = fileName.substring(i);
-			mergedFileName = getOutputFolder() + File.separator
-					+ fileName.substring(0, i);
+			mergedFileName = getOutputFolder() + File.separator + fileName.substring(0, i);
 			if (merge) {
 				mergedFileName += " " + I18N.getText("Merger.merged.text");
 			} else {
@@ -118,8 +117,7 @@ public class Merger {
 			}
 			mergedFileName += extension;
 		} else {
-			mergedFileName = getOutputFolder() + File.separator
-					+ compareNames(subs1.getFileName(), subs2.getFileName());
+			mergedFileName = getOutputFolder() + File.separator + compareNames(subs1.getFileName(), subs2.getFileName());
 		}
 		return mergedFileName;
 	}

@@ -34,44 +34,39 @@ import com.github.dualsub.srt.SrtUtils;
 import com.github.dualsub.util.Charset;
 import com.github.dualsub.util.Log;
 
-/**
- * TestSrt.
- * 
- * @author Boni Garcia (boni.gg@gmail.com)
- * @since 1.0.0
- */
-public class TestSrt {
+
+public class TestFriendsSrt {
 
 	private Srt srtEn;
-	private Srt srtEs;
+	private Srt srtVn;
 	private Merger merger;
 
 	@Before
-	public void setup() throws IOException {
-		String srtEnFile = "Game of Thrones 1x01 - Winter Is Coming (English).srt";
-		String srtEsFile = "Game of Thrones 1x01 - Winter Is Coming (Spanish).srt";
+  public void setup() throws IOException {
+    String srtEnFile = "Friends.S05E01_en.srt";
+    String srtVnFile = "Friends.S05E01_vn.srt";
 
-		SrtUtils.init("624", "Tahoma", 17, false, true, ".", 50);
-		srtEn = new Srt(srtEnFile);
-		srtEs = new Srt(srtEsFile);
-		Log.info(srtEn.getFileName() + " " + Charset.detect(srtEnFile));
-		Log.info(srtEs.getFileName() + " " + Charset.detect(srtEsFile));
-		Properties properties = new Properties();
-		InputStream inputStream = Thread.currentThread()
-				.getContextClassLoader()
-				.getResourceAsStream("dualsub.properties");
-		properties.load(inputStream);
-		merger = new Merger(".", true, 1000, true, properties,
-				Charset.ISO88591, 0, false, true);
-	}
+    SrtUtils.init("624", "Tahoma", 17, false, true, ".", 50);
+    srtEn = new Srt(srtEnFile);
+    srtVn = new Srt(srtVnFile);
+    Log.info(srtEn.getFileName() + " " + Charset.detect(srtEnFile));
+    Log.info(srtVn.getFileName() + " " + Charset.detect(srtVnFile));
+    Properties properties = new Properties();
+    InputStream inputStream = Thread.currentThread()
+                                    .getContextClassLoader()
+                                    .getResourceAsStream("dualsub.properties");
+    properties.load(inputStream);
+    merger = new Merger(".", true, 1000, true, properties, Charset.UTF8, 0, false, true);
+  }
 
 	@Test
 	public void testReadSrt() throws IOException {
 		Log.info("srtEnFile size=" + srtEn.getSubtitles().size());
-		Log.info("srtEsFile size=" + srtEs.getSubtitles().size());
+		Log.info("srtEsFile size=" + srtVn.getSubtitles().size());
 
-		Assert.assertEquals(srtEn.getSubtitles().size(), srtEs.getSubtitles()
-				.size());
+		//srtEn.log();
+		//srtVn.log();
+		Assert.assertEquals(srtEn.getSubtitles().size(), srtVn.getSubtitles().size());
 	}
 
 	@Test
@@ -96,16 +91,15 @@ public class TestSrt {
 
 	@Test
 	public void testMergedFileName() {
-		String mergedFileName = merger.getMergedFileName(srtEs, srtEn);
+		String mergedFileName = merger.getMergedFileName(srtVn, srtEn);
 		Log.info(mergedFileName);
-		Assert.assertEquals("." + File.separator
-				+ "Game of Thrones 1x01 - Winter Is Coming.srt", mergedFileName);
+		Assert.assertEquals("." + File.separator + "Friends S05E01.srt", mergedFileName);
 	}
 
 	@Test
 	public void testCompleteSrtISO88591() throws ParseException, IOException {
-		DualSrt dualSrt = merger.mergeSubs(srtEs, srtEn);
-		String mergedFileName = merger.getMergedFileName(srtEs, srtEn);
+	  DualSrt dualSrt = merger.mergeSubs(srtEn, srtVn);
+		String mergedFileName = merger.getMergedFileName(srtEn,  srtVn);
 		dualSrt.writeSrt(mergedFileName, Charset.ISO88591, false, true);
 		Log.info(mergedFileName + " " + Charset.detect(mergedFileName));
 		//new File(mergedFileName).delete();
@@ -114,11 +108,11 @@ public class TestSrt {
 
 	@Test
 	public void testCompleteSrtUTF8() throws ParseException, IOException {
-		DualSrt dualSrt = merger.mergeSubs(srtEs, srtEn);
-		String mergedFileName = merger.getMergedFileName(srtEs, srtEn);
+		DualSrt dualSrt = merger.mergeSubs(srtEn, srtVn);
+		String mergedFileName = merger.getMergedFileName(srtVn, srtEn);
 		dualSrt.writeSrt(mergedFileName, Charset.UTF8, false, true);
 		Log.info(mergedFileName + " " + Charset.detect(mergedFileName));
-		new File(mergedFileName).delete();
+		//new File(mergedFileName).delete();
 	}
 
 }

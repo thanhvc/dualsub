@@ -50,28 +50,27 @@ public class Srt {
 		this.readSrt(fileName);
 	}
 
-	public Srt(Srt inputSrt, String fromLang, String toLang, String charset)
-			throws IOException {
-		this.subtitles = new TreeMap<String, Entry>();
-		Map<String, Entry> subtitlesToTranslate = inputSrt.getSubtitles();
-		String lineToTranslate;
-		String translatedLine;
-		Entry translatedEntry;
-		for (String time : subtitlesToTranslate.keySet()) {
-			lineToTranslate = "";
-			for (String line : subtitlesToTranslate.get(time)
-					.getSubtitleLines()) {
-				lineToTranslate += line + " ";
-			}
-			translatedEntry = new Entry();
-			translatedLine = Translator.getInstance().translate(
-					lineToTranslate, fromLang, toLang, charset);
-			Log.debug("** Translate " + lineToTranslate + " ** FROM "
-					+ fromLang + " TO " + toLang + " ** " + translatedLine);
-			translatedEntry.add(translatedLine);
-			subtitles.put(time, translatedEntry);
-		}
-	}
+  public Srt(Srt inputSrt, String fromLang, String toLang, String charset) throws IOException {
+    this.subtitles = new TreeMap<String, Entry>();
+    Map<String, Entry> subtitlesToTranslate = inputSrt.getSubtitles();
+    String lineToTranslate;
+    String translatedLine;
+    Entry translatedEntry;
+    for (String time : subtitlesToTranslate.keySet()) {
+      lineToTranslate = "";
+      for (String line : subtitlesToTranslate.get(time).getSubtitleLines()) {
+        lineToTranslate += line + " ";
+      }
+      translatedEntry = new Entry();
+      translatedLine = Translator.getInstance().translate(lineToTranslate,
+                                                          fromLang,
+                                                          toLang,
+                                                          charset);
+      Log.debug("** Translate " + lineToTranslate + " ** FROM " + fromLang + " TO " + toLang + " ** " + translatedLine);
+      translatedEntry.add(translatedLine);
+      subtitles.put(time, translatedEntry);
+    }
+  }
 
 	/**
 	 * Converts a subtitle file (SRT) into a Map, in which key in the timing of
@@ -90,8 +89,7 @@ public class Srt {
 		charset = Charset.detect(isForDetection);
 		Log.info(file + " detected charset " + charset);
 
-		BufferedReader br = new BufferedReader(new InputStreamReader(
-				isForReading, charset));
+		BufferedReader br = new BufferedReader(new InputStreamReader(isForReading, charset));
 		try {
 			String line = br.readLine();
 			while (line != null) {
