@@ -46,7 +46,7 @@ public class TestFriendsSrt {
     String srtEnFile = "Friends.S05E01_en.srt";
     String srtVnFile = "Friends.S05E01_vn.srt";
 
-    SrtUtils.init("624", "Tahoma", 17, false, true, ".", 50);
+    SrtUtils.init("450", "Tahoma", 14, true, false, ".", 50);
     srtEn = new Srt(srtEnFile);
     srtVn = new Srt(srtVnFile);
     Log.info(srtEn.getFileName() + " " + Charset.detect(srtEnFile));
@@ -56,7 +56,7 @@ public class TestFriendsSrt {
                                     .getContextClassLoader()
                                     .getResourceAsStream("dualsub.properties");
     properties.load(inputStream);
-    merger = new Merger(".", true, 1000, true, properties, Charset.UTF8, 0, false, true);
+    merger = new Merger(".", true, 1000, true, properties, Charset.UTF8, 0, false, false);
   }
 
 	@Test

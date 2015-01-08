@@ -355,10 +355,10 @@ public class DualSrt {
   public void writeSrt(String fileOuput, String charsetStr, boolean translate, boolean merge) throws IOException,
                                                                                              ParseException {
     if (!translate || (translate & merge)) {
-      addPadding();
+      //addPadding();
     }
     if (extend) {
-      shiftSubs(extension, progressive);
+      //shiftSubs(extension, progressive);
     }
 
     FileOutputStream fileOutputStream = new FileOutputStream(new File(fileOuput));
@@ -380,22 +380,51 @@ public class DualSrt {
       byteBuffer = ByteBuffer.wrap((time + SrtUtils.EOL).getBytes(Charset.forName(charsetStr)));
       fileChannel.write(byteBuffer);
 
-      int limit = subtitles.get(time).length > 1 ? Math.max(subtitles.get(time)[0].size(),
-                                                            subtitles.get(time)[1].size())
-                                                : subtitles.get(time)[0].size();
-      for (int i = 0; i < limit; i++) {
-        left = i < subtitles.get(time)[0].size() ? subtitles.get(time)[0].get(i)
-                                                : SrtUtils.getBlankLine();
-        if (subtitles.get(time).length > 1) {
-          right = i < subtitles.get(time)[1].size() ? subtitles.get(time)[1].get(i)
+//      int limit = subtitles.get(time).length > 1 ? Math.max(subtitles.get(time)[0].size(),
+//                                                            subtitles.get(time)[1].size())
+//                                                : subtitles.get(time)[0].size();
+//      for (int i = 0; i < limit; i++) {
+//        left = i < subtitles.get(time)[0].size() ? subtitles.get(time)[0].get(i)
+//                                                : SrtUtils.getBlankLine();
+//        if (subtitles.get(time).length > 1) {
+//          right = i < subtitles.get(time)[1].size() ? subtitles.get(time)[1].get(i)
+//                                                   : SrtUtils.getBlankLine();
+//        }
+//        uCharBuffer = CharBuffer.wrap(left + right + SrtUtils.EOL);
+//        byteBuffer = encoder.encode(uCharBuffer);
+//
+//        Log.debug(new String(byteBuffer.array(), Charset.forName(charsetStr)));
+//
+//        fileChannel.write(byteBuffer);
+//      }
+      
+      if (subtitles.get(time).length > 1) {
+        int leftLength = subtitles.get(time)[0].size();
+        
+        for (int l = 0; l < leftLength; l++) {
+          left += l < subtitles.get(time)[0].size() ? subtitles.get(time)[0].get(l) + " "
                                                    : SrtUtils.getBlankLine();
         }
-        uCharBuffer = CharBuffer.wrap(left + right + SrtUtils.EOL);
+
+        //write left
+        uCharBuffer = CharBuffer.wrap(left.trim() + SrtUtils.EOL);
         byteBuffer = encoder.encode(uCharBuffer);
-
         Log.debug(new String(byteBuffer.array(), Charset.forName(charsetStr)));
-
         fileChannel.write(byteBuffer);
+        left = "";
+        
+        int rightLength = subtitles.get(time)[1].size();
+        for (int r = 0; r < rightLength; r++) {
+          right += r < subtitles.get(time)[1].size() ? subtitles.get(time)[1].get(r) + " " : SrtUtils.getBlankLine();
+          
+        }
+        
+        //write right
+        uCharBuffer = CharBuffer.wrap(right.trim() + SrtUtils.EOL);
+        byteBuffer = encoder.encode(uCharBuffer);
+        Log.debug(new String(byteBuffer.array(), Charset.forName(charsetStr)));
+        fileChannel.write(byteBuffer);
+        right = "";
       }
       byteBuffer = ByteBuffer.wrap(SrtUtils.EOL.getBytes(Charset.forName(charsetStr)));
       fileChannel.write(byteBuffer);

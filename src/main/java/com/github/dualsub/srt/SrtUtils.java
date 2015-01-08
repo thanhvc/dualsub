@@ -33,194 +33,209 @@ import com.github.dualsub.util.Log;
  */
 public class SrtUtils {
 
-	private static final String SPACE = " ";
-	private static final String HARD_SPACE = "\\h";
+  private static final String SPACE      = " ";
 
-	public static final String SEP_SRT = " --> ";
-	public static final String SRT_EXT = ".srt";
-	public static final String TAG_INIT = "<";
-	public static final String TAG_END = ">";
-	public static final String EOL = "\r\n";
+  private static final String HARD_SPACE = "\\h";
 
-	private Font font;
-	private FontMetrics fontMetrics;
-	private float maxWidth;
-	private float separatorWidth;
-	private float spaceWidth;
-	private float halfWidth;
-	private String blankLine;
-	private SimpleDateFormat simpleDateFormat;
-	private String padding;
-	private String separator;
-	private boolean usingSpace;
-	private boolean usingSeparator;
+  public static final String  SEP_SRT    = " --> ";
 
-	private static SrtUtils singleton = null;
+  public static final String  SRT_EXT    = ".srt";
 
-	public static SrtUtils getSingleton() {
-		if (singleton == null) {
-			singleton = new SrtUtils();
-		}
-		return singleton;
-	}
+  public static final String  TAG_INIT   = "<";
 
-	// Default constructor
-	public SrtUtils() {
-	}
+  public static final String  TAG_END    = ">";
 
-	@SuppressWarnings("deprecation")
-	public static void init(String maxWidth, String fontFamily, int fontSize,
-			boolean space, boolean separator, String separatorChar, int guard) {
-		Log.debug("maxWidth " + maxWidth + " fontFamily " + fontFamily
-				+ " fontSize " + fontSize + " space " + space + " separator "
-				+ separator + " separatorChar " + separatorChar + " guard "
-				+ guard);
-		SrtUtils srtUtils = getSingleton();
-		srtUtils.font = new Font(fontFamily, Font.PLAIN, fontSize);
-		srtUtils.maxWidth = Float.parseFloat(maxWidth) - guard;
-		srtUtils.fontMetrics = Toolkit.getDefaultToolkit().getFontMetrics(
-				srtUtils.font);
-		srtUtils.simpleDateFormat = new SimpleDateFormat("HH:mm:ss,SSS");
-		srtUtils.separator = separator ? separatorChar : "";
-		srtUtils.padding = space ? SrtUtils.SPACE : SrtUtils.HARD_SPACE;
-		srtUtils.usingSpace = space;
-		srtUtils.usingSeparator = separator;
-		srtUtils.separatorWidth = separator ? getWidth(srtUtils.separator) : 0;
+  public static final String  EOL        = "\r\n";
 
-		// Even if hard space is used, the width of the padding is the same
-		// as the normal space
-		srtUtils.spaceWidth = getWidth(SPACE);
+  private Font                font;
 
-		// Gap of two characters (space + separator)
-		srtUtils.halfWidth = (srtUtils.maxWidth / 2) - 2
-				* (srtUtils.spaceWidth + srtUtils.separatorWidth);
+  private FontMetrics         fontMetrics;
 
-		// Blank line
-		int numSpaces = (int) Math.round(srtUtils.halfWidth / getSpaceWidth());
+  private float               maxWidth;
 
-		if (separator) {
-			srtUtils.blankLine = SrtUtils.getSeparator()
-					+ repeat(SrtUtils.getPadding(), numSpaces)
-					+ SrtUtils.getSeparator();
-		} else {
-			srtUtils.blankLine = repeat(SrtUtils.getPadding(), numSpaces);
-		}
-	}
+  private float               separatorWidth;
 
-	public static int getWidth(String message) {
-		final int width = SrtUtils.getSingleton().fontMetrics
-				.stringWidth(message);
-		Log.debug("getWidth " + message + " " + width);
-		return width;
-	}
+  private float               spaceWidth;
 
-	/**
-	 * 
-	 * @param str
-	 * @param times
-	 * @return
-	 */
-	public static String repeat(String str, int times) {
-		return new String(new char[times]).replace("\0", str);
-	}
+  private float               halfWidth;
 
-	/**
-	 * It reads the initial time of a subtitle entry
-	 * 
-	 * @param line
-	 * @return
-	 * @throws ParseException
-	 */
-	public static Date getInitTime(String line) throws ParseException {
-		Date out = null;
-		int i = line.indexOf(SrtUtils.SEP_SRT);
-		if (i != -1) {
-			String time = line.substring(0, i).trim();
-			if (time.length() == 8) {
-				// Time without milliseconds (e.g. 01:27:40)
-				time += ",000";
-			}
-			out = SrtUtils.getSingleton().simpleDateFormat.parse(time);
-		}
-		return out;
-	}
+  private String              blankLine;
 
-	/**
-	 * It reads the ending time of a subtitle entry
-	 * 
-	 * @param line
-	 * @return
-	 * @throws ParseException
-	 */
-	public static Date getEndTime(String line) throws ParseException {
-		Date out = null;
-		int i = line.indexOf(SrtUtils.SEP_SRT);
-		if (i != -1) {
-			String time = line.substring(i + SrtUtils.SEP_SRT.length());
-			if (time.length() == 8) {
-				// Time without milliseconds (e.g. 01:27:40)
-				time += ",000";
-			}
-			out = SrtUtils.getSingleton().simpleDateFormat.parse(time);
-		}
-		return out;
-	}
+  private SimpleDateFormat    simpleDateFormat;
 
-	public static String createSrtTime(Date dateFrom, Date dateTo) {
-		return SrtUtils.format(dateFrom) + SrtUtils.SEP_SRT
-				+ SrtUtils.format(dateTo);
-	}
+  private String              padding;
 
-	public static Font getFont() {
-		return SrtUtils.getSingleton().font;
-	}
+  private String              separator;
 
-	public static float getMaxWidth() {
-		return SrtUtils.getSingleton().maxWidth;
-	}
+  private boolean             usingSpace;
 
-	public static FontMetrics getFontMetrics() {
-		return SrtUtils.getSingleton().fontMetrics;
-	}
+  private boolean             usingSeparator;
 
-	public static float getSeparatorWidth() {
-		return SrtUtils.getSingleton().separatorWidth;
-	}
+  private static SrtUtils     singleton  = null;
 
-	public static float getSpaceWidth() {
-		return SrtUtils.getSingleton().spaceWidth;
-	}
+  public static SrtUtils getSingleton() {
+    if (singleton == null) {
+      singleton = new SrtUtils();
+    }
+    return singleton;
+  }
 
-	public static float getHalfWidth() {
-		return SrtUtils.getSingleton().halfWidth;
-	}
+  // Default constructor
+  public SrtUtils() {
+  }
 
-	public static String format(Date date) {
-		return SrtUtils.getSingleton().simpleDateFormat.format(date);
-	}
+  @SuppressWarnings("deprecation")
+  public static void init(String maxWidth,
+                          String fontFamily,
+                          int fontSize,
+                          boolean space,
+                          boolean separator,
+                          String separatorChar,
+                          int guard) {
+    Log.debug("maxWidth " + maxWidth + " fontFamily " + fontFamily + " fontSize " + fontSize
+        + " space " + space + " separator " + separator + " separatorChar " + separatorChar
+        + " guard " + guard);
+    SrtUtils srtUtils = getSingleton();
+    srtUtils.font = new Font(fontFamily, Font.PLAIN, fontSize);
+    srtUtils.maxWidth = Float.parseFloat(maxWidth) - guard;
+    srtUtils.fontMetrics = Toolkit.getDefaultToolkit().getFontMetrics(srtUtils.font);
+    srtUtils.simpleDateFormat = new SimpleDateFormat("HH:mm:ss,SSS");
+    srtUtils.separator = separator ? separatorChar : "";
+    srtUtils.padding = space ? SrtUtils.SPACE : SrtUtils.HARD_SPACE;
+    srtUtils.usingSpace = space;
+    srtUtils.usingSeparator = separator;
+    srtUtils.separatorWidth = separator ? getWidth(srtUtils.separator) : 0;
 
-	public static String getBlankLine() {
-		return SrtUtils.getSingleton().blankLine;
-	}
+    // Even if hard space is used, the width of the padding is the same
+    // as the normal space
+    srtUtils.spaceWidth = getWidth(SPACE);
 
-	public static String getSeparator() {
-		return SrtUtils.getSingleton().separator;
-	}
+    // Gap of two characters (space + separator)
+    srtUtils.halfWidth = (srtUtils.maxWidth / 2) - 2
+        * (srtUtils.spaceWidth + srtUtils.separatorWidth);
 
-	public static String getPadding() {
-		return SrtUtils.getSingleton().padding;
-	}
+    // Blank line
+    int numSpaces = (int) Math.round(srtUtils.halfWidth / getSpaceWidth());
 
-	public static boolean isUsingSpace() {
-		return SrtUtils.getSingleton().usingSpace;
-	}
+    if (separator) {
+      srtUtils.blankLine = SrtUtils.getSeparator() + repeat(SrtUtils.getPadding(), numSpaces)
+          + SrtUtils.getSeparator();
+    } else {
+      srtUtils.blankLine = repeat(SrtUtils.getPadding(), numSpaces);
+    }
+  }
 
-	public static boolean isUsingSeparator() {
-		return SrtUtils.getSingleton().usingSeparator;
-	}
+  public static int getWidth(String message) {
+    final int width = SrtUtils.getSingleton().fontMetrics.stringWidth(message);
+    Log.debug("getWidth " + message + " " + width);
+    return width;
+  }
 
-	public static String getSpace() {
-		return SrtUtils.SPACE;
-	}
+  /**
+   * @param str
+   * @param times
+   * @return
+   */
+  public static String repeat(String str, int times) {
+    return new String(new char[times]).replace("\0", str);
+  }
+
+  /**
+   * It reads the initial time of a subtitle entry
+   * 
+   * @param line
+   * @return
+   * @throws ParseException
+   */
+  public static Date getInitTime(String line) throws ParseException {
+    Date out = null;
+    int i = line.indexOf(SrtUtils.SEP_SRT);
+    if (i != -1) {
+      String time = line.substring(0, i).trim();
+      if (time.length() == 8) {
+        // Time without milliseconds (e.g. 01:27:40)
+        time += ",000";
+      }
+      out = SrtUtils.getSingleton().simpleDateFormat.parse(time);
+    }
+    return out;
+  }
+
+  /**
+   * It reads the ending time of a subtitle entry
+   * 
+   * @param line
+   * @return
+   * @throws ParseException
+   */
+  public static Date getEndTime(String line) throws ParseException {
+    Date out = null;
+    int i = line.indexOf(SrtUtils.SEP_SRT);
+    if (i != -1) {
+      String time = line.substring(i + SrtUtils.SEP_SRT.length());
+      if (time.length() == 8) {
+        // Time without milliseconds (e.g. 01:27:40)
+        time += ",000";
+      }
+      out = SrtUtils.getSingleton().simpleDateFormat.parse(time);
+    }
+    return out;
+  }
+
+  public static String createSrtTime(Date dateFrom, Date dateTo) {
+    return SrtUtils.format(dateFrom) + SrtUtils.SEP_SRT + SrtUtils.format(dateTo);
+  }
+
+  public static Font getFont() {
+    return SrtUtils.getSingleton().font;
+  }
+
+  public static float getMaxWidth() {
+    return SrtUtils.getSingleton().maxWidth;
+  }
+
+  public static FontMetrics getFontMetrics() {
+    return SrtUtils.getSingleton().fontMetrics;
+  }
+
+  public static float getSeparatorWidth() {
+    return SrtUtils.getSingleton().separatorWidth;
+  }
+
+  public static float getSpaceWidth() {
+    return SrtUtils.getSingleton().spaceWidth;
+  }
+
+  public static float getHalfWidth() {
+    return SrtUtils.getSingleton().halfWidth;
+  }
+
+  public static String format(Date date) {
+    return SrtUtils.getSingleton().simpleDateFormat.format(date);
+  }
+
+  public static String getBlankLine() {
+    return SrtUtils.getSingleton().blankLine;
+  }
+
+  public static String getSeparator() {
+    return SrtUtils.getSingleton().separator;
+  }
+
+  public static String getPadding() {
+    return SrtUtils.getSingleton().padding;
+  }
+
+  public static boolean isUsingSpace() {
+    return SrtUtils.getSingleton().usingSpace;
+  }
+
+  public static boolean isUsingSeparator() {
+    return SrtUtils.getSingleton().usingSeparator;
+  }
+
+  public static String getSpace() {
+    return SrtUtils.SPACE;
+  }
 
 }

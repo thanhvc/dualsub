@@ -130,28 +130,24 @@ public class Merger {
 	 * @param str2
 	 * @return
 	 */
-	private String compareNames(String str1, String str2) {
-		str1 = str1.substring(str1.lastIndexOf(File.separator) + 1).replaceAll(
-				SrtUtils.SRT_EXT, "");
-		str2 = str2.substring(str2.lastIndexOf(File.separator) + 1).replaceAll(
-				SrtUtils.SRT_EXT, "");
+  private String compareNames(String str1, String str2) {
+    str1 = str1.substring(str1.lastIndexOf(File.separator) + 1).replaceAll(SrtUtils.SRT_EXT, "");
+    str2 = str2.substring(str2.lastIndexOf(File.separator) + 1).replaceAll(SrtUtils.SRT_EXT, "");
 
-		List<String> set1 = new ArrayList<String>(Arrays.asList(str1
-				.split(" |_|\\.")));
-		List<String> set2 = new ArrayList<String>(Arrays.asList(str2
-				.split(" |_|\\.")));
-		set1.retainAll(set2);
+    List<String> set1 = new ArrayList<String>(Arrays.asList(str1.split(" |_|\\.")));
+    List<String> set2 = new ArrayList<String>(Arrays.asList(str2.split(" |_|\\.")));
+    set1.retainAll(set2);
 
-		StringBuilder sb = new StringBuilder();
-		for (String s : set1) {
-			sb.append(s).append(SrtUtils.getSpace());
-		}
-		String finalName = sb.toString().trim();
-		if (finalName.isEmpty()) {
-			finalName = I18N.getText("Merger.finalName.text").trim();
-		}
-		return finalName + SrtUtils.SRT_EXT;
-	}
+    StringBuilder sb = new StringBuilder();
+    for (String s : set1) {
+      sb.append(s).append(SrtUtils.getSpace());
+    }
+    String finalName = sb.toString().trim();
+    if (finalName.isEmpty()) {
+      finalName = I18N.getText("Merger.finalName.text").trim();
+    }
+    return finalName + SrtUtils.SRT_EXT;
+  }
 
 	public String getOutputFolder() {
 		return outputFolder;
